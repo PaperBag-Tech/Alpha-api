@@ -16,44 +16,74 @@ def token(formData: OAuth2PasswordRequestForm = Depends()):
 
 # policies
 
-@app.post("/policy")
+@app.post("/policy", tags=["Policy"])
 def CreatePolicy(data:Policy, token:str = Depends(AuthScheme)):
+	"""
+	Creates new policy.
+	"""
 	pass
 
-@app.get("/policies")
+@app.get("/policies",tags=["Policy"])
 def GetAllPolicies():
+	"""
+	Get all policies.
+	"""
 	pass
 
-@app.get("policy/{id}")
+@app.get("policy/{id}",tags=["Policy"])
 def GetPolicyById(id:int):
+	"""
+	Get policy by ID.
+	"""
 	pass
 
-@app.put("/policy/{id}")
+@app.put("/policy/{id}",tags=["Policy"])
 def UpdatePolicyById(id:int,data:Policy,token:str = Depends(AuthScheme)):
+	"""
+	Update policy by ID.
+	"""
 	pass
 
-@app.delete("/policy/{id}")
+@app.delete("/policy/{id}",tags=["Policy"], description="")
 def DeletePolicyById(id:int, token:str = Depends(AuthScheme)):
+	"""
+	Delete a policy by ID.
+	"""
 	pass
 
 # categories 
 
-@app.post("/category")
+@app.post("/category", tags=["Category"])
 def CreateCategory(data: Category, token:str = Depends(AuthScheme)):
+	"""
+	Creates a Category.
+	"""
 	pass
 
-@app.get("/categories")
+@app.get("/categories", tags=["Category"])
 def GetAllCategories():
+	"""
+	Get all categories.
+	"""
 	pass
 
-@app.get("category/{id}")
+@app.get("category/{id}", tags=["Category"])
 def GetCategoryById(id:int):
+	"""
+	Get category by ID.
+	"""
 	pass
 
-@app.delete("category/{id}")
+@app.delete("category/{id}", tags=["Category"])
 def DeleteCategoryById(id:int, token:str = Depends(AuthScheme)):
+	"""
+	Delete a category by ID.
+	"""
 	pass
 
-@app.put("category/{id}")
+@app.put("category/{id}", tags=["Category"])
 def UpdateCategoryById(id:int, data:Category, token:str = Depends(AuthScheme)):
+	"""
+	Update category by ID.
+	"""
 	pass
