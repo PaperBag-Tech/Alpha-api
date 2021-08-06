@@ -1,20 +1,16 @@
-from fastapi import FastAPI, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from Routes import category, policy
+from fastapi import FastAPI
+from Database.Config import Base, engine
+from API.v1.api import router
 
+app = FastAPI(title="AlphaAPI")
 
-app = FastAPI()
-AuthScheme = OAuth2PasswordBearer(tokenUrl="token")
 
 @app.get("/")
 def Index():
-	return {"Title":"Index"}
+	return {"Title":"Go to /docs for more info."}
 
-# login 
-@app.post("/token")
-def token(formData: OAuth2PasswordRequestForm = Depends()):
-	pass
+# configuring all the api routes
+app.include_router(router)
 
-
-app.include_router(category.CategoryRouter)
-app.include_router(policy.PolicyRouter)
+# configuring database
+Base.metadata.create_all(engine)

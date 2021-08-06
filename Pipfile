@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+asgiref = "==3.4.1"
+click = "==8.0.1"
+fastapi = "==0.67.0"
+greenlet = "==1.1.0"
+h11 = "==0.12.0"
+mysqlclient = "==2.0.3"
+protobuf = "==3.17.3"
+pydantic = "==1.8.2"
+python-multipart = "==0.0.5"
+six = "==1.16.0"
+starlette = "==0.14.2"
+typing-extensions = "==3.10.0.0"
+uvicorn = "==0.14.0"
+SQLAlchemy = "==1.4.22"
+alembic = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"

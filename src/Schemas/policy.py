@@ -1,10 +1,21 @@
-from typing import List, Optional
+from typing import List
 from pydantic import BaseModel
-from .category import CategorySchema
+from datetime import datetime
 
-class PolicySchema(BaseModel):
-	categoryId: CategorySchema
+class _PolicyBase(BaseModel):
 	codeName: str
-	title: str
-	desp: str
-	details: Optional[List[str]] = None
+	title: str 
+	desp: str 
+	categoryId: int 
+	details: str
+
+class PolicyWrite(_PolicyBase):
+	pass
+
+class PolicyRead(_PolicyBase):
+	id: int
+	created_at: datetime
+	updated_at: datetime
+
+	class Config:
+		orm_mode = True
