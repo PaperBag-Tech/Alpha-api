@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from Database.Config import Base, engine
-from API.v1.api import router
+from API.V1.Main import router
 
 app = FastAPI(title="AlphaAPI")
 

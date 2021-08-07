@@ -3,20 +3,20 @@ from sqlalchemy.orm import session
 from Schemas.Category import CategoryWrite, CategoryRead
 from typing import List
 from Models.Category import Category as CategoryModel
-from Database.Config import sessionMaker
+from Database.Config import getDB
 from datetime import datetime
 
 CategoryRouter = APIRouter()
 
-@CategoryRouter.get("/", response_model=List[CategoryRead])
-async def GetAll(db:session = Depends(sessionMaker)):
+@CategoryRouter.get("/", response_model=List[CategoryRead], status_code=200)
+async def GetAll(db:session = Depends(getDB)):
 	"""
 	Get all category
 	"""
 	return db.query(CategoryModel).all()
 
-@CategoryRouter.post("/", response_model=CategoryRead)
-async def Create(data: CategoryWrite, db: session = Depends(sessionMaker)):
+@CategoryRouter.post("/", response_model=CategoryRead, status_code=201)
+async def Create(data: CategoryWrite, db: session = Depends(getDB)):
 	"""
 	Creates new Category
 	"""
@@ -26,8 +26,8 @@ async def Create(data: CategoryWrite, db: session = Depends(sessionMaker)):
 	return category
 	
 
-@CategoryRouter.get("/{id}", response_model=CategoryRead)
-async def GetById(id: int, db:session = Depends(sessionMaker)):
+@CategoryRouter.get("/{id}", response_model=CategoryRead, status_code=200)
+async def GetById(id: int, db:session = Depends(getDB)):
 	"""
 	Get Category by Id
 	"""
@@ -35,7 +35,7 @@ async def GetById(id: int, db:session = Depends(sessionMaker)):
 	
 
 @CategoryRouter.put("/{id}", response_model=CategoryRead)
-async def Updated(id: int, data: CategoryWrite, db:session = Depends(sessionMaker)):
+async def Updated(id: int, data: CategoryWrite, db:session = Depends(getDB)):
 	category:CategoryRead = _getCategory(id, db)
 	category.name = data.name
 	category.desp = data.desp
@@ -43,8 +43,8 @@ async def Updated(id: int, data: CategoryWrite, db:session = Depends(sessionMake
 	db.commit()
 	return category
 
-@CategoryRouter.delete("/{id}", response_model=CategoryRead)
-async def Delete(id: int, db:session = Depends(sessionMaker)):
+@CategoryRouter.delete("/{id}", response_model=CategoryRead, status_code=202)
+async def Delete(id: int, db:session = Depends(getDB)):
 	"""
 	Deletes category by Id
 	"""
