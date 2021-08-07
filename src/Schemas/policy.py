@@ -6,7 +6,7 @@ class _PolicyBase(BaseModel):
 	codeName: str
 	title: str 
 	desp: str 
-	categoryId: int 
+	categoryId: int
 	details: str
 
 class PolicyWrite(_PolicyBase):

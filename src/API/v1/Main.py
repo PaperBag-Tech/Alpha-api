@@ -1,5 +1,5 @@
-from API.v1.endpoints.Category import CategoryRouter
-from API.v1.endpoints.Policy import PolicyRouter
+from API.V1.endpoints.Category import CategoryRouter
+from API.V1.endpoints.Policy import PolicyRouter
 from fastapi import APIRouter
 
 
