@@ -34,7 +34,7 @@ async def GetById(id: int, db:session = Depends(getDB)):
 	return _getCategory(id, db)
 	
 
-@CategoryRouter.put("/{id}", response_model=CategoryRead)
+@CategoryRouter.put("/{id}", response_model=CategoryRead, status_code=200)
 async def Updated(id: int, data: CategoryWrite, db:session = Depends(getDB)):
 	category:CategoryRead = _getCategory(id, db)
 	category.name = data.name

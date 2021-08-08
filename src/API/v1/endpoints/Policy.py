@@ -34,7 +34,7 @@ async def Create(data: PolicyWrite, db: session= Depends(getDB)):
 	db.commit()
 	return policy
 
-@PolicyRouter.put("/{id}", response_model=PolicyRead)
+@PolicyRouter.put("/{id}", response_model=PolicyRead, status_code=200)
 async def Update(id: int, data: PolicyWrite, db: session = Depends(getDB)):
 	policy:PolicyRead = _getPolicy(id, db)
 	category:CategoryRead = _getCategory(data.categoryId,db)

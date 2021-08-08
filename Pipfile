@@ -22,6 +22,7 @@ alembic = "*"
 pytest = "*"
 requests = "*"
 pytest-order = "*"
+email-validator = "*"
 
 [dev-packages]
 
