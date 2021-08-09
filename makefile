@@ -1,7 +1,7 @@
 dev:
 	cd src && uvicorn Index:app --reload && cd ..
 test:
-	pytest
+	pytest -v
 	rm src/Tests/*.db
 migrate:
 	cd src && alembic revision -m "$(msg)" && cd ..
