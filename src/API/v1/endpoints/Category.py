@@ -11,7 +11,7 @@ CategoryRouter = APIRouter()
 @CategoryRouter.get("/", response_model=List[CategoryRead], status_code=200)
 async def GetAll(db:session = Depends(getDB)):
 	"""
-	Get all category
+	Get all categories
 	"""
 	return db.query(CategoryModel).all()
 

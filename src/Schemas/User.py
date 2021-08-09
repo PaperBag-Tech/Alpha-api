@@ -1,25 +1,26 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
-class EditorBase(BaseModel):
+class UserBase(BaseModel):
 	emailId: EmailStr
 	fullName: str 
-	phoneNumber: int 
+	phoneNumber: int
+	roleId: int
 
 
-class EditorRead(EditorBase):
+class UserRead(UserBase):
 	id: int 
 	created_at: datetime
 	updated_at: datetime 
 
-class EditorWrite(EditorBase):
+class UserWrite(UserBase):
 	password: str
 
-class EditorPassword(BaseModel):
+class UserPasswordChange(BaseModel):
 	emailId: EmailStr
 	oldPassword: str
 	newPassword: str
 
-class EditorLogin(BaseModel):
+class UserLogin(BaseModel):
 	emailId: EmailStr
 	password: str

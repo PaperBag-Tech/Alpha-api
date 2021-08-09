@@ -23,6 +23,8 @@ pytest = "*"
 requests = "*"
 pytest-order = "*"
 email-validator = "*"
+passlib = "*"
+bcrypt = "*"
 
 [dev-packages]
 
