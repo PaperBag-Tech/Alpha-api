@@ -7,3 +7,5 @@ migrate:
 	cd src && alembic revision -m "$(msg)" && cd ..
 upgradeDB:
 	cd src && alembic upgrade head && cd ..
+createAdmin:
+	python src/Admin.py
