@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from Database.Config import Base
-from Models.Policy import Policy
 from datetime import datetime
 
 class Category(Base):

@@ -1,5 +1,4 @@
 import json
-from src.API.V1.endpoints.Policy import PolicyRouter
 
 class TestPolicy:
 

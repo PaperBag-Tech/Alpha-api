@@ -1,9 +1,12 @@
 from logging.config import fileConfig
+
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from Database.Config import Base
+
 from alembic import context
-import secrets
+
+from Database.Config import Base
+import Secrets
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -24,6 +27,9 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+def getDBUrl():
+    return f"mysql+mysqldb://{Secrets.dbUserName}:{Secrets.dbPassword}@{Secrets.dbHost}:{Secrets.dbPort}/{Secrets.dbName}"
+
 
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
@@ -37,10 +43,7 @@ def run_migrations_offline():
     script output.
 
     """
-    url = "mysql+mysqldb://{0}:{1}@{2}:{3}/{4}".format(
-        secrets.dbUserName, secrets.dbPassword,
-        secrets.dbHost, secrets.dbPort, secrets.dbName
-    )
+    url = getDBUrl()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -59,10 +62,10 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
+    configuration = config.get_section(config.config_ini_section)
+    configuration["sqlalchemy.url"] = getDBUrl()
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
+        configuration, prefix="sqlalchemy.", poolclass=pool.NullPool,
     )
 
     with connectable.connect() as connection:

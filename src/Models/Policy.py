@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from Database.Config import Base
 from datetime import datetime
+from Models.Category import Category
 
 class Policy(Base):
 	__tablename__ = "policies"
@@ -17,7 +18,7 @@ class Policy(Base):
 	created_at = Column(DateTime, default=datetime.utcnow())
 	updated_at = Column(DateTime, default=datetime.utcnow())
 
-	category = relationship("Category", back_populates="policies")
+	category = relationship(Category, back_populates="policies")
 
 	def __repr__(self) -> str:
 		return self.codeName
