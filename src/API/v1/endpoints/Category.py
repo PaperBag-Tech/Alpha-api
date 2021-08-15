@@ -19,6 +19,7 @@ async def GetAll(db:session = Depends(getDB)):
 	"""
 	Get all categories
 	"""
+	print(type(db))
 	return db.query(CategoryModel).all()
 
 @CategoryRouter.get("/{id}", response_model=CategoryRead, status_code=200)
