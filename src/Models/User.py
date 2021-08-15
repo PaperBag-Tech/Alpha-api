@@ -12,7 +12,7 @@ class User(Base):
 	emailId = Column(String(length=100), unique=True, nullable=False)
 	fullName = Column(String(length=100), nullable=False)
 	passwordHash = Column(String(length=512), nullable=False)
-	phoneNumber = Column(Integer, unique=True)
+	phoneNumber = Column(String(length=15), unique=True)
 	roleId = Column(Integer, ForeignKey("roles.id"))
 
 	created_at = Column(DateTime, default=datetime.utcnow())

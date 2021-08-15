@@ -5,8 +5,14 @@ from typing import List
 from Models.Category import Category as CategoryModel
 from Database.Config import getDB
 from datetime import datetime
+from API.Authentication import RoleChecker
 
 CategoryRouter = APIRouter()
+
+read = RoleChecker(CategoryModel.__tablename__,"read")
+write = RoleChecker(CategoryModel.__tablename__,"write")
+update = RoleChecker(CategoryModel.__tablename__,"update")
+delete = RoleChecker(CategoryModel.__tablename__,"delete")
 
 @CategoryRouter.get("/", response_model=List[CategoryRead], status_code=200)
 async def GetAll(db:session = Depends(getDB)):
@@ -15,8 +21,15 @@ async def GetAll(db:session = Depends(getDB)):
 	"""
 	return db.query(CategoryModel).all()
 
+@CategoryRouter.get("/{id}", response_model=CategoryRead, status_code=200)
+async def GetById(id: int, db:session = Depends(getDB)):
+	"""
+	Get Category by Id
+	"""
+	return _getCategory(id, db)
+
 @CategoryRouter.post("/", response_model=CategoryRead, status_code=201)
-async def Create(data: CategoryWrite, db: session = Depends(getDB)):
+async def Create(data: CategoryWrite, db: session = Depends(getDB),access: bool = Depends(write)):
 	"""
 	Creates new Category
 	"""
@@ -26,16 +39,8 @@ async def Create(data: CategoryWrite, db: session = Depends(getDB)):
 	return category
 	
 
-@CategoryRouter.get("/{id}", response_model=CategoryRead, status_code=200)
-async def GetById(id: int, db:session = Depends(getDB)):
-	"""
-	Get Category by Id
-	"""
-	return _getCategory(id, db)
-	
-
 @CategoryRouter.put("/{id}", response_model=CategoryRead, status_code=200)
-async def Updated(id: int, data: CategoryWrite, db:session = Depends(getDB)):
+async def Update(id: int, data: CategoryWrite, db:session = Depends(getDB), access: bool = Depends(update)):
 	category:CategoryRead = _getCategory(id, db)
 	category.name = data.name
 	category.desp = data.desp
@@ -44,7 +49,7 @@ async def Updated(id: int, data: CategoryWrite, db:session = Depends(getDB)):
 	return category
 
 @CategoryRouter.delete("/{id}", response_model=CategoryRead, status_code=202)
-async def Delete(id: int, db:session = Depends(getDB)):
+async def Delete(id: int, db:session = Depends(getDB), access: bool = Depends(delete)):
 	"""
 	Deletes category by Id
 	"""

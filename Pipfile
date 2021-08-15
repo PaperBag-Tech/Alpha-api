@@ -25,6 +25,7 @@ pytest-order = "*"
 email-validator = "*"
 passlib = "*"
 bcrypt = "*"
+python-jose = "*"
 
 [dev-packages]
 

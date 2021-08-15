@@ -8,6 +8,8 @@ class Role(Base):
 
 	id = Column(Integer, primary_key= True)
 	name = Column(String(length=100), unique= True, nullable= False)
+	desp = Column(String(length=100))
+	permissions = Column(String(length=500), nullable= False)
 
 	created_at = Column(DateTime, default=datetime.utcnow())
 	updated_at = Column(DateTime, default=datetime.utcnow()) 
