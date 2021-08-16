@@ -5,6 +5,7 @@ from Models.Category import Category
 from Models.Role import Role
 from Models.User import User
 from API.Authentication import hashPassword
+from Colors import bcolors
 
 
 
@@ -43,11 +44,15 @@ if __name__ == "__main__":
 		db.add(role)
 		db.commit()
 		db.refresh(role)
-		print("**************************** Admin role created ****************************")
+		print(f"{bcolors.OKGREEN}**************************** Admin role created ****************************{bcolors.ENDC}")
+	else:
+		print(f"{bcolors.WARNING}**************************** Admin role exists in db ****************************{bcolors.ENDC}")
 	user = db.query(User).filter(User.roleId == role.id).first()
 	if user == None:
 		user = getAdminUserData(role.id)
 		db.add(user)
 		db.commit()
-		print("**************************** Admin user created ****************************")
+		print(f"{bcolors.OKGREEN}**************************** Admin user created ****************************{bcolors.ENDC}")
+	else:
+		print(f"{bcolors.WARNING}**************************** Admin user exists in db ****************************{bcolors.ENDC}")
 	db.close()
