@@ -35,9 +35,7 @@ def getAdminUserData(roleId:int):
 	phoneNumber=phoneNumber, roleId=roleId)
 	return user
 
-if __name__ == "__main__":
-	Base.metadata.create_all(engine)
-	db = LocalSession()
+def create(db: session):
 	role = db.query(Role).filter(Role.name == "Admin").first()
 	if role == None:
 		role = getAdminRoleData()
@@ -56,3 +54,9 @@ if __name__ == "__main__":
 	else:
 		print(f"{bcolors.WARNING}**************************** Admin user exists in db ****************************{bcolors.ENDC}")
 	db.close()
+
+
+if __name__ == "__main__":
+	Base.metadata.create_all(engine)
+	db = LocalSession()
+	create(db)

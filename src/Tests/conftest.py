@@ -7,6 +7,7 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) 
 
 from Database.Config import Base, getDB
+from Admin import create
 from Index import app
 
 
@@ -15,6 +16,8 @@ testDbUrl = "sqlite:///./src/Tests/test_db.db"
 testEngine = create_engine(testDbUrl,connect_args={"check_same_thread": False})
 TestSession = sessionmaker(autocommit=False, autoflush=False, bind=testEngine)
 Base.metadata.create_all(bind=testEngine)
+db = TestSession()
+create(db)
 
 def getTestDB():
 	try:

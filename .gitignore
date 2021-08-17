@@ -3,3 +3,4 @@ secrets.py
 .pytest_cache
 *.db
 **/versions/*.py
+.DS_Store
