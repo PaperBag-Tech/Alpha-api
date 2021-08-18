@@ -38,6 +38,9 @@ async def Create(data: PolicyWrite, db: session= Depends(getDB), access: bool = 
 		Create policy record
 	"""
 	category:CategoryRead = _getCategory(data.categoryId, db)
+	dulicatePolicy = db.query(PolicyModel).filter(PolicyModel.codeName == data.codeName).first()
+	if dulicatePolicy != None:
+		raise HTTPException(409, detail= {"error" : "Duplicate entry"})
 	policy = PolicyModel(
 		codeName = data.codeName, title = data.title,
 		desp = data.desp, categoryId = category.id, details = data.details)

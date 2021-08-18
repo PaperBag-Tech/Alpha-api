@@ -14,11 +14,14 @@ write = RoleChecker(RoleModel.__tablename__,"write")
 update = RoleChecker(RoleModel.__tablename__,"update")
 delete = RoleChecker(RoleModel.__tablename__,"delete")
 
-@RoleRouter.post("/",response_model=RoleRead, status_code=201)
+@RoleRouter.post("/")#,response_model=RoleRead, status_code=201)
 async def create(data: RoleWrite, db: session = Depends(getDB), access: bool = Depends(write)):
 	"""
 		Create role record
 	"""
+	duplicateRole = db.query(RoleModel).filter(RoleModel.name == data.name).first()
+	if duplicateRole != None:
+		raise HTTPException(409, detail={"error" : "Duplicate entry"})
 	permission = []
 	for role in data.permissions:
 		permission.append(f"{role.object}:{role.access}")
@@ -26,7 +29,7 @@ async def create(data: RoleWrite, db: session = Depends(getDB), access: bool = D
 	role = RoleModel(name = data.name, desp = data.desp, permissions= permission)
 	db.add(role)
 	db.commit()
-	return role
+	return (_convertRoleModelToRoleRead([role]))[0]
 
 @RoleRouter.get("/permissions", status_code= 200)
 async def GetAllPermissions(db: session = Depends(getDB), access: bool = Depends(read)):
