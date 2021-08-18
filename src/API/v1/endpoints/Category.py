@@ -34,6 +34,9 @@ async def Create(data: CategoryWrite, db: session = Depends(getDB),access: bool 
 	"""
 	Creates new Category
 	"""
+	duplicateCatgory = db.query(CategoryModel).filter(CategoryModel.name == data.name).first()
+	if duplicateCatgory != None:
+		raise HTTPException(409, detail= {"error" : "Duplicate entry"})
 	category = CategoryModel(name = data.name, desp = data.desp)
 	db.add(category)
 	db.commit()

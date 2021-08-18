@@ -6,6 +6,7 @@ from Database.Config import getDB
 from Schemas.User import UserBase, UserPasswordChange, UserRead, UserWrite
 from Models.User import User as UserModel
 from API.Authentication import hashPassword, RoleChecker
+from .Role import _getRole
 
 
 UserRouter = APIRouter()
@@ -39,6 +40,11 @@ async def Create(data: UserWrite ,db: session = Depends(getDB), access: bool = D
 	"""
 	Create new user 
 	"""
+	_getRole(data.roleId, db)
+	duplicateUser = db.query(UserModel).filter(UserModel.emailId == data.emailId 
+	or UserModel.phoneNumber == data.phoneNumber).first()
+	if duplicateUser != None:
+		raise HTTPException(409, detail= {"error", "Duplicate entry"})
 	passwordHash = hashPassword(data.password)
 	user = UserModel(emailId = data.emailId, fullName = data.fullName, 
 	phoneNumber = data.phoneNumber, roleId = data.roleId, passwordHash = passwordHash)
