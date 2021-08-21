@@ -1,5 +1,8 @@
 import json
 import pytest
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from Tests.Authentication_test import token
 
 class TestCategory:
 	def test_CreateCategory(args,testSession):
@@ -7,6 +10,7 @@ class TestCategory:
   			"name": "Test Name",
   			"desp": "Test Desp"
 		}
+		print(token)
 		response = testSession.post("/category/", json.dumps(data))
 		assert response.status_code == 201
 		res = response.json()

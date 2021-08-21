@@ -35,7 +35,7 @@ def getAdminUserData(roleId:int):
 	phoneNumber=phoneNumber, roleId=roleId)
 	return user
 
-def create(db: session):
+def createAdminRole(db:session):
 	role = db.query(Role).filter(Role.name == "Admin").first()
 	if role == None:
 		role = getAdminRoleData()
@@ -45,18 +45,21 @@ def create(db: session):
 		print(f"{bcolors.OKGREEN}**************************** Admin role created ****************************{bcolors.ENDC}")
 	else:
 		print(f"{bcolors.WARNING}**************************** Admin role exists in db ****************************{bcolors.ENDC}")
-	user = db.query(User).filter(User.roleId == role.id).first()
-	if user == None:
-		user = getAdminUserData(role.id)
-		db.add(user)
-		db.commit()
-		print(f"{bcolors.OKGREEN}**************************** Admin user created ****************************{bcolors.ENDC}")
-	else:
-		print(f"{bcolors.WARNING}**************************** Admin user exists in db ****************************{bcolors.ENDC}")
-	db.close()
+	return role
+
+def createAdminUser(db: session, user: User):
+	db.add(user)
+	db.commit()
+	print(f"{bcolors.OKGREEN}**************************** Admin user created ****************************{bcolors.ENDC}")
 
 
 if __name__ == "__main__":
 	Base.metadata.create_all(engine)
 	db = LocalSession()
-	create(db)
+	role = createAdminRole()
+	user = db.query(User).filter(User.roleId == role.id).first()
+	if user == None:
+		user = getAdminUserData(role.id)
+		createAdminUser(db, user)
+	else:
+		print(f"{bcolors.WARNING}**************************** Admin user exists in db ****************************{bcolors.ENDC}")
