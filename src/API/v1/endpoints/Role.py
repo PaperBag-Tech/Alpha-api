@@ -23,6 +23,9 @@ async def create(data: RoleValidator.RoleWrite, db: session = Depends(dbConfig.g
 	"""
 		Create role record
 	"""
+	duplicateRole = db.query(RoleModel).filter(RoleModel.name == data.name).first()
+	if duplicateRole != None:
+		raise HTTPException(409, detail={"error" : "Duplicate entry"})
 	permission = []
 	for role in data.permissions:
 		permission.append(f"{role.object}:{role.access}")
