@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, session
+
 import Secrets
 
 engine = create_engine('mysql+mysqldb://{0}:{1}@{2}:{3}/{4}'.format(
@@ -12,8 +13,9 @@ LocalSession = sessionmaker(autocommit=False,autoflush=False, bind=engine)
 Base = declarative_base()
 
 def getDB():
-	db = LocalSession()
+	db: session = LocalSession()
 	try:
+		db.expire_on_commit = False
 		yield db
 	finally:
 		db.close()

@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
-from Database.Config import Base
 from datetime import datetime
 
-class Category(Base):
+import Database.Config as dbConfig
+
+class Category(dbConfig.Base):
 	__tablename__ = "categories"
 
 	id = Column(Integer, primary_key=True)

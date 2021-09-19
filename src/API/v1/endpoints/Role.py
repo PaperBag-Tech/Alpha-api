@@ -1,21 +1,25 @@
 from datetime import datetime
 from sqlalchemy.orm import session
 from fastapi import APIRouter, Depends, HTTPException
-from Schemas.Role import RoleRead, RoleWrite, Permission
-from Database.Config import getDB
-from Models.Role import Base, Role as RoleModel
-from API.Authentication import RoleChecker
 from typing import List
+
+import Schemas.Role as RoleValidator
+import Database.Config as dbConfig
+import Models.Role as RoleModel
+import API.Authentication as auth
+import Database.Enums as Constants
+import Models.User as UserModel
+
 
 RoleRouter = APIRouter()
 
-read = RoleChecker(RoleModel.__tablename__,"read")
-write = RoleChecker(RoleModel.__tablename__,"write")
-update = RoleChecker(RoleModel.__tablename__,"update")
-delete = RoleChecker(RoleModel.__tablename__,"delete")
+read = auth.RoleChecker(RoleModel.Role.__tablename__,"read")
+write = auth.RoleChecker(RoleModel.Role.__tablename__,"write")
+update = auth.RoleChecker(RoleModel.Role.__tablename__,"update")
+delete = auth.RoleChecker(RoleModel.Role.__tablename__,"delete")
 
-@RoleRouter.post("/",response_model=RoleRead, status_code=201)
-async def create(data: RoleWrite, db: session = Depends(getDB), access: bool = Depends(write)):
+@RoleRouter.post("/",response_model=RoleValidator.RoleRead, status_code=201)
+async def create(data: RoleValidator.RoleWrite, db: session = Depends(dbConfig.getDB), access: UserModel.User = Depends(write)):
 	"""
 		Create role record
 	"""
@@ -23,79 +27,82 @@ async def create(data: RoleWrite, db: session = Depends(getDB), access: bool = D
 	for role in data.permissions:
 		permission.append(f"{role.object}:{role.access}")
 	permission = ",".join(permission)
-	role = RoleModel(name = data.name, desp = data.desp, permissions= permission)
+	role = RoleModel.Role(name = data.name, type = Constants.UserRole(data.type), permissions= permission)
 	db.add(role)
 	db.commit()
-	return role
+	return (_convertRoleModelToRoleRead([role]))[0]
 
 @RoleRouter.get("/permissions", status_code= 200)
-async def GetAllPermissions(db: session = Depends(getDB), access: bool = Depends(read)):
+async def GetAllPermissions(access: UserModel.User = Depends(read)):
 	"""
 		Gets all permissions list
 	"""
 	permissions = list()
-	for tables in Base.metadata.tables.keys():
+	for tables in dbConfig.Base.metadata.tables.keys():
 		permissions.append(f"{tables}:read")
 		permissions.append(f"{tables}:write")
 		permissions.append(f"{tables}:update")
 		permissions.append(f"{tables}:delete")
 	return permissions
 
-@RoleRouter.put("/{id}", response_model=RoleRead, status_code=200)
-async def Update(id: int, data: RoleWrite, db: session = Depends(getDB), access: bool = Depends(update)):
+@RoleRouter.put("/{id}", response_model=RoleValidator.RoleRead, status_code=200)
+async def Update(id: int, data: RoleValidator.RoleWrite, db: session = Depends(dbConfig.getDB), access: UserModel.User = Depends(update)):
 	"""
 		Update role record by id
 	"""
-	role: RoleModel = _getRole(id, db)
+	role: RoleModel.Role = _getRole(id, db)
 	role.name = data.name
+	role.type = Constants.UserRole(data.type)
 	permissionList = list()
 	for permission in data.permissions:
 		permissionList.append(f"{permission.object}:{permission.access}")
-	role.permissions = ".".join(permissionList)
+	role.permissions = ",".join(permissionList)
 	role.updated_at = datetime.utcnow()
 	db.commit()
+	return (_convertRoleModelToRoleRead([role]))[0]
 
-@RoleRouter.delete("/{id}", response_model=RoleRead, status_code=202)
-async def Delete(id: int, db: session = Depends(getDB), access: bool = Depends(delete)):
+@RoleRouter.delete("/{id}", response_model=RoleValidator.RoleRead, status_code=202)
+async def Delete(id: int, db: session = Depends(dbConfig.getDB), access: UserModel.User = Depends(delete)):
 	"""
 		Delets Role by id
 	"""
 	role = _getRole(id, db)
 	db.delete(role)
 	db.commit()
-	return role
+	return (_convertRoleModelToRoleRead([role]))[0]
 
-@RoleRouter.get("/{id}", response_model=RoleRead, status_code=200)
-async def GetById(id: int, db: session = Depends(getDB), access: bool = Depends(read)):
+@RoleRouter.get("/{id}", response_model=RoleValidator.RoleRead, status_code=200)
+async def GetById(id: int, db: session = Depends(dbConfig.getDB), access: UserModel.User = Depends(read)):
 	"""
 		Gets Role by id
 	"""
 	role:RoleModel = _getRole(id, db)
 	return (_convertRoleModelToRoleRead([role]))[0]
 
-@RoleRouter.get("/", response_model=List[RoleRead], status_code=200)
-async def GetAll(db: session = Depends(getDB), access: bool = Depends(read)):
+@RoleRouter.get("/", response_model=List[RoleValidator.RoleRead], status_code=200)
+async def GetAll(db: session = Depends(dbConfig.getDB), access: UserModel.User = Depends(read)):
 	"""
 		Gets all Roles
 	"""
-	roles:list[RoleModel] = db.query(RoleModel).all()
+	roles:list[RoleModel.Role] = db.query(RoleModel.Role).all()
 	return _convertRoleModelToRoleRead(roles)
 
 def _getRole(id: int, db: session):
-	role = db.query(RoleModel).filter(RoleModel.id == id).first()
+	role = db.query(RoleModel.Role).filter(RoleModel.Role.id == id).first()
 	if role == None:
 		details = {"error" : f"Role record with id {id} is not found"}
 		raise HTTPException(404, detail= details)
 	return role
 
-def _convertRoleModelToRoleRead(roles:List[RoleModel]) -> List[RoleRead]:
-	roleReadList:list[RoleRead] = roles
+def _convertRoleModelToRoleRead(roles:List[RoleModel.Role]) -> List[RoleValidator.RoleRead]:
+	roleReadList:list[RoleValidator.RoleRead] = roles
 	for role in roleReadList:
-		permissionObjectList:list[Permission] = list()
+		role.type = Constants.UserRole(role.type)
+		permissionObjectList:list[RoleValidator.Permission] = list()
 		permissionsList = role.permissions.split(',')
 		for permission in permissionsList:
 			permissionList = permission.split(":")
-			permissionObject = Permission(object=permissionList[0],access=permissionList[1])
+			permissionObject = RoleValidator.Permission(object=permissionList[0],access=permissionList[1])
 			permissionObjectList.append(permissionObject)
 		role.permissions = permissionObjectList
 	return roleReadList	

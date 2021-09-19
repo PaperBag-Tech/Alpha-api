@@ -1,11 +1,12 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
-from Database.Config import Base
 from datetime import datetime
-from Models.Category import Category
 
-class Policy(Base):
+import Database.Config as dbConfig
+import Models.Category as CategoryModel
+
+class Policy(dbConfig.Base):
 	__tablename__ = "policies"
 
 	id = Column(Integer, primary_key=True)
@@ -18,7 +19,7 @@ class Policy(Base):
 	created_at = Column(DateTime, default=datetime.utcnow())
 	updated_at = Column(DateTime, default=datetime.utcnow())
 
-	category = relationship(Category, back_populates="policies")
+	category = relationship(CategoryModel.Category, back_populates="policies")
 
 	def __repr__(self) -> str:
 		return self.codeName

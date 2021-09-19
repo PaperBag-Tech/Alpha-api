@@ -2,10 +2,12 @@ from sqlalchemy.orm import session
 from Database.Config import LocalSession, Base, engine
 from Models.Policy import Policy
 from Models.Category import Category
+from Models.Schedule import Schedule
 from Models.Role import Role
 from Models.User import User
 from API.Authentication import hashPassword
 from Colors import bcolors
+from Database.Enums import UserRole
 
 
 
@@ -19,6 +21,7 @@ def getAdminRoleData():
 	roleStr = ",".join(roleList)
 	admin = Role()
 	admin.name = "Admin"
+	admin.type = UserRole.Admin
 	admin.desp = "Full access"
 	admin.permissions = roleStr
 	return admin
@@ -38,7 +41,7 @@ def getAdminUserData(roleId:int):
 if __name__ == "__main__":
 	Base.metadata.create_all(engine)
 	db = LocalSession()
-	role = db.query(Role).filter(Role.name == "Admin").first()
+	role = db.query(Role).filter(Role.type == UserRole.Admin.name).first()
 	if role == None:
 		role = getAdminRoleData()
 		db.add(role)
