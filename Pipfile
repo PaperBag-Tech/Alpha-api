@@ -26,6 +26,7 @@ email-validator = "*"
 passlib = "*"
 bcrypt = "*"
 python-jose = "*"
+pytz = "*"
 
 [dev-packages]
 

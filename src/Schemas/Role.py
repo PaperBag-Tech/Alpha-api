@@ -2,13 +2,15 @@ from typing import List
 from pydantic import BaseModel
 from datetime import datetime
 
+import Database.Enums as Constants
+
 class Permission(BaseModel):
 	object:str 
 	access:str
 
 class Role(BaseModel):
 	name: str
-	desp: str
+	type: Constants.UserRole
 	permissions: List[Permission]
 
 class RoleRead(Role):
